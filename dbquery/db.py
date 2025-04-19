@@ -56,17 +56,18 @@ class DB:
         i = 0
         while i < len(query):
             char = query[i]
-            
+            prev_char = query[i-1] if i > 0 else None
             # 文字列リテラルの開始/終了を検出
-            if char in ["'", '"'] and (i == 0 or query[i-1] != '\\'):
+            if char in ["'", '"'] and prev_char != '\\':
                 if not in_string:
                     in_string = True
                     string_char = char
                 elif string_char == char:
                     in_string = False
+                    string_char = None
             
             # バッククォートによる識別子の開始/終了を検出
-            elif char == '`' and (i == 0 or query[i-1] != '\\'):
+            elif char == '`' and not in_string and prev_char != '\\':
                 in_identifier = not in_identifier
             
             # プレースホルダーの変換（文字列やバッククォート内でなければ）

@@ -227,6 +227,36 @@ class TestDB(unittest.TestCase):
         result = db._convert_placeholders(query)
         self.assertEqual(result, expected)
 
+    def test_convert_placeholders_with_backticks_in_string_literals(self):
+        """文字列リテラル内のバッククォートは識別子として扱われないことを確認"""
+        # MySQLコネクションを使用する設定 (SQLite以外ならどれでも良い)
+        self.mock_create_connection.return_value = self.mock_mysql_conn
+        self.mock_mysql_conn.__class__ = MySQLConnection
+        db = DB(self.mysql_config)
+
+        # シングルクォート内のバッククォート
+        query_single = "SELECT * FROM users WHERE name = ? AND comment = 'This is a `test` with a ? inside' AND status = ?"
+        expected_single = "SELECT * FROM users WHERE name = %s AND comment = 'This is a `test` with a ? inside' AND status = %s"
+        result_single = db._convert_placeholders(query_single)
+        self.assertEqual(result_single, expected_single, "シングルクォート内のバッククォートが誤認識されている")
+
+        # ダブルクォート内のバッククォート
+        query_double = 'SELECT * FROM users WHERE name = ? AND comment = "Another `test` with a ? inside" AND status = ?'
+        expected_double = 'SELECT * FROM users WHERE name = %s AND comment = "Another `test` with a ? inside" AND status = %s'
+        result_double = db._convert_placeholders(query_double)
+        self.assertEqual(result_double, expected_double, "ダブルクォート内のバッククォートが誤認識されている")
+
+        # バッククォート識別子と文字列リテラル内のバッククォートが混在
+        query_mixed = "SELECT `col?` FROM `table` WHERE name = ? AND comment = 'String with `backtick` and ?' AND id = ?"
+        expected_mixed = "SELECT `col?` FROM `table` WHERE name = %s AND comment = 'String with `backtick` and ?' AND id = %s"
+        result_mixed = db._convert_placeholders(query_mixed)
+        self.assertEqual(result_mixed, expected_mixed, "識別子と文字列内のバッククォート混在時に誤認識されている")
+
+        # エスケープされたバッククォートを含む文字列
+        query_escaped = r"SELECT * FROM users WHERE name = ? AND data = 'This has an escaped \` backtick' AND value = ?"
+        expected_escaped = r"SELECT * FROM users WHERE name = %s AND data = 'This has an escaped \` backtick' AND value = %s"
+        result_escaped = db._convert_placeholders(query_escaped)
+        self.assertEqual(result_escaped, expected_escaped, "エスケープされたバッククォートが誤認識されている")
 
 if __name__ == '__main__':
     unittest.main()
