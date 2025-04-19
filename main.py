@@ -29,7 +29,7 @@ def main():
 
     # Sqlite
     db.raw_execute("""
-    CREATE TABLE users (
+    CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         email TEXT,
@@ -39,7 +39,7 @@ def main():
     """)
     
     db.raw_execute("""
-    CREATE TABLE contacts (
+    CREATE TABLE IF NOT EXISTS contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         phone TEXT,
@@ -48,7 +48,7 @@ def main():
     """)
     # MySQL
     # db.raw_execute("""
-    # CREATE TABLE users (
+    # CREATE TABLE IF NOT EXISTS users (
     #     id INT PRIMARY KEY AUTO_INCREMENT,
     #     name VARCHAR(255),
     #     email VARCHAR(255),
@@ -58,7 +58,7 @@ def main():
     # """)
     
     # db.raw_execute("""
-    # CREATE TABLE contacts (
+    # CREATE TABLE IF NOT EXISTS contacts (
     #     id INT PRIMARY KEY AUTO_INCREMENT,
     #     user_id INT,
     #     phone VARCHAR(255),
@@ -67,7 +67,7 @@ def main():
     # """)
     # PostgreSQL
     # db.raw_execute("""
-    # CREATE TABLE users (
+    # CREATE TABLE IF NOT EXISTS users (
     #     id SERIAL PRIMARY KEY,
     #     name VARCHAR(255),
     #     email VARCHAR(255),
@@ -77,7 +77,7 @@ def main():
     # """)
     
     # db.raw_execute("""
-    # CREATE TABLE contacts (
+    # CREATE TABLE IF NOT EXISTS contacts (
     #     id SERIAL PRIMARY KEY,
     #     user_id INT,
     #     phone VARCHAR(255),
