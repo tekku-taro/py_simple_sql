@@ -142,6 +142,11 @@ def main():
     count = db.table("users").count()
     print(f"ユーザー数: {count}")
     
+    print("\nrawメソッド:")
+    results = db.raw("SELECT * FROM users WHERE name = ?", ["Jane"])
+    for row in results:
+        print(row)
+
     # 接続を切断
     db.disconnect()
 

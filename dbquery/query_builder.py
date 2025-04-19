@@ -218,7 +218,7 @@ class QueryBuilder:
                 for row in rows:
                     # columnsタプルの順序で値を取得
                     bindings_list.append([row[col] for col in columns])
-                self.dump()
+
                 results.append(self.connection.execute_many(sql, bindings_list))
             
         # すべてのINSERTが成功した場合にTrueを返す
